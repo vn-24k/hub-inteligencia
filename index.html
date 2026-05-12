@@ -1,80 +1,69 @@
-k<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sincronização Estratégica</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Global Ops | Silva & Kannika</title>
     <style>
-        body { background-color: #050505; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
-        .zone-container { display: flex; flex-direction: column; height: 100vh; }
+        body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
+        .wrapper { display: flex; flex-direction: column; height: 100vh; }
         .zone { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
         
-        /* Fundos com as bandeiras */
-        .br-bg { background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url('https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg') center/cover; }
-        .th-bg { background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url('https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg') center/cover; }
+        /* Bandeiras com overlay escuro para leitura */
+        .br { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg') center/cover; }
+        .th { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg') center/cover; }
 
-        .elite-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); padding: 30px; border-radius: 4px; text-align: center; width: 85%; border: 1px solid rgba(255,255,255,0.05); }
-        .br-card { border-top: 4px solid #00ff88; box-shadow: 0 15px 35px rgba(0, 255, 136, 0.1); }
-        .th-card { border-top: 4px solid #ff2a2a; box-shadow: 0 15px 35px rgba(255, 42, 42, 0.1); }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); padding: 30px; border-radius: 4px; text-align: center; width: 85%; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .br-border { border-top: 4px solid #00ff88; }
+        .th-border { border-top: 4px solid #ff2a2a; }
 
-        /* Nomes Personalizados */
-        .person-name { font-size: 1.2rem; font-weight: 300; letter-spacing: 6px; text-transform: uppercase; color: #fff; margin-bottom: 5px; opacity: 0.9; }
-        .city-name { letter-spacing: 3px; font-size: 0.7rem; color: #888; text-transform: uppercase; margin-bottom: 15px; }
+        .person { font-size: 1.4rem; letter-spacing: 4px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .clock { font-size: 4rem; font-family: 'Courier New', monospace; font-weight: 700; margin: 10px 0; }
+        .clock span { font-size: 2rem; opacity: 0.3; }
+        .temp { background: rgba(255,255,255,0.1); padding: 4px 15px; border-radius: 2px; font-size: 0.8rem; letter-spacing: 2px; }
         
-        .clock { font-size: 4.5rem; font-weight: 700; font-family: 'Courier New', monospace; letter-spacing: -2px; }
-        .clock span { font-size: 2.2rem; opacity: 0.3; font-weight: 300; }
-        .temp { font-family: monospace; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 2px; font-size: 0.85rem; color: #aaa; }
-        
-        /* Rodapé Discreto (Mensagem agora é uma linha fina no fundo) */
-        .footer-status { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 0.65rem; color: #444; letter-spacing: 2px; text-transform: uppercase; z-index: 5; }
+        .subtle-footer { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 3px; }
     </style>
 </head>
 <body>
-    <div class="zone-container">
-        <div class="zone br-bg">
-            <div class="elite-card br-card">
-                <div class="person-name">Vinícius Silva</div>
-                <div class="city-name" id="br-city">SÃO PAULO</div>
-                <div class="clock" id="br-time">00:00<span>:00</span></div>
+    <div class="wrapper">
+        <div class="zone br">
+            <div class="glass br-border">
+                <div class="person">Vinícius Silva</div>
+                <div class="clock" id="br-t">00:00<span>:00</span></div>
                 <div class="temp" id="br-temp">--°C</div>
             </div>
         </div>
-
-        <div class="zone th-bg">
-            <div class="elite-card th-card">
-                <div class="person-name">Tawan Kannika</div>
-                <div class="city-name" id="th-city">BANGKOK</div>
-                <div class="clock" id="th-time">00:00<span>:00</span></div>
+        <div class="zone th">
+            <div class="glass th-border">
+                <div class="person">Tawan Kannika</div>
+                <div class="clock" id="th-t">00:00<span>:00</span></div>
                 <div class="temp" id="th-temp">--°C</div>
             </div>
         </div>
     </div>
-
-    <div class="footer-status" id="msg-pt">Sistema Sincronizado</div>
+    <div class="subtle-footer">Telemetria Sincronizada</div>
 
     <script>
-        let config = {};
-        async function load() {
+        let data = {};
+        async function sync() {
             const r = await fetch(`dados_ia.json?v=${Date.now()}`);
-            config = await r.json();
-            document.getElementById('br-temp').innerText = config.brasil.temperatura;
-            document.getElementById('th-temp').innerText = config.tailandia.temperatura;
-            document.getElementById('msg-pt').innerText = config.mensagem.pt;
+            data = await r.json();
+            document.getElementById('br-temp').innerText = data.brasil.temp;
+            document.getElementById('th-temp').innerText = data.tailandia.temp;
         }
-
-        function tick() {
+        function update() {
             const now = new Date();
-            const format = (tz, id) => {
+            const f = (tz, id) => {
                 const s = now.toLocaleTimeString('pt-BR', {timeZone: tz, hour12: false});
-                const parts = s.split(':');
-                document.getElementById(id).innerHTML = `${parts[0]}:${parts[1]}<span>:${parts[2]}</span>`;
+                const [h, m, sec] = s.split(':');
+                document.getElementById(id).innerHTML = `${h}:${m}<span>:${sec}</span>`;
             };
-            if(config.brasil) format(config.brasil.timeZone, 'br-time');
-            if(config.tailandia) format(config.tailandia.timeZone, 'th-time');
+            if(data.brasil) f(data.brasil.timeZone, 'br-t');
+            if(data.tailandia) f(data.tailandia.timeZone, 'th-t');
         }
-        setInterval(tick, 1000);
-        load();
+        setInterval(update, 1000);
+        sync();
     </script>
 </body>
 </html>

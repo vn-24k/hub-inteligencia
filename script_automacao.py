@@ -1,38 +1,34 @@
 import requests, json, datetime
 
 def buscar_telemetria():
-    # Coordenadas precisas
-    api_url = "https://api.open-meteo.com/v1/forecast"
-    params_sp = {"latitude": -23.55, "longitude": -46.63, "current_weather": True}
-    params_th = {"latitude": 13.75, "longitude": 100.50, "current_weather": True}
+    url = "https://api.open-meteo.com/v1/forecast"
+    # Coordenadas: SP (-23.55, -46.63) | Bangkok (13.75, 100.50)
+    p_sp = {"latitude": -23.55, "longitude": -46.63, "current_weather": True}
+    p_th = {"latitude": 13.75, "longitude": 100.50, "current_weather": True}
 
     try:
-        temp_sp = requests.get(api_url, params=params_sp).json()['current_weather']['temperature']
-        temp_th = requests.get(api_url, params=params_th).json()['current_weather']['temperature']
+        t_sp = requests.get(url, params=p_sp).json()['current_weather']['temperature']
+        t_th = requests.get(url, params=p_th).json()['current_weather']['temperature']
     except:
-        temp_sp, temp_th = "--", "--"
+        t_sp, t_th = "--", "--"
 
     dados = {
         "brasil": {
-            "cidade": "São Paulo, BR",
+            "nome": "Vinícius Silva",
             "timeZone": "America/Sao_Paulo",
-            "temperatura": f"{temp_sp}°C"
+            "temp": f"{t_sp}°C"
         },
         "tailandia": {
-            "cidade": "Bangkok, TH",
+            "nome": "Tawan Kannika",
             "timeZone": "Asia/Bangkok",
-            "temperatura": f"{temp_th}°C"
+            "temp": f"{t_th}°C"
         },
-        "mensagem": {
-            "pt": "Sistemas Globais Sincronizados. Operando via Código Proprietário.",
-            "th": "ระบบออนไลน์และเชื่อมต่อแล้ว"
-        }
+        "status": "Sincronização Ativa"
     }
 
     with open("dados_ia.json", "w", encoding='utf-8') as f:
         json.dump(dados, f, indent=4, ensure_ascii=False)
-    print("Dados de telemetria atualizados!")
+    print("Telemetria concluída com sucesso!")
 
 if __name__ == "__main__":
     buscar_telemetria()
-

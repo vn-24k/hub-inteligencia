@@ -1,16 +1,13 @@
 {
     "brasil": {
-        "cidade": "São Paulo, BR",
+        "nome": "Vinícius Silva",
         "timeZone": "America/Sao_Paulo",
-        "temperatura": "9.6°C"
+        "temp": "9.4°C"
     },
     "tailandia": {
-        "cidade": "Bangkok, TH",
+        "nome": "Tawan Kannika",
         "timeZone": "Asia/Bangkok",
-        "temperatura": "30.3°C"
+        "temp": "30.2°C"
     },
-    "mensagem": {
-        "pt": "Sistemas Globais Sincronizados. Operando via Código Proprietário.",
-        "th": "ระบบออนไลน์และเชื่อมต่อแล้ว"
-    }
+    "status": "Sincronização Ativa"
 }
