@@ -3,67 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VINICIUS CAETANO | STRATEGIC HUB</title>
+    <title>Sincronização Global</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background: #020617; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.8); border: 1px solid #1e293b; border-radius: 12px; backdrop-filter: blur(8px); }
-        .accent { color: #38bdf8; }
-        .btn-cmd { border: 1px solid #38bdf8; color: #38bdf8; background: transparent; transition: 0.3s; }
-        .btn-cmd:hover { background: #38bdf8; color: #020617; box-shadow: 0 0 15px #38bdf8; }
-        .status-bar { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+        body { background-color: #121212; color: #ffffff; font-family: 'Inter', sans-serif; }
+        .card-zone { background: #1e1e1e; border-radius: 15px; padding: 30px; text-align: center; height: 100%; border-top: 3px solid #555; }
+        .br-zone { border-color: #009c3b; }
+        .th-zone { border-color: #ce1126; }
+        .time-display { font-size: 3.5rem; font-weight: 700; margin: 15px 0; letter-spacing: -2px; }
+        .temp-badge { background: #333; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; }
+        .msg-box { background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 20px; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="container py-4">
-        <header class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h4 class="fw-bold mb-0">CORE <span class="accent">COMMAND</span></h4>
-                <div class="status-bar accent">● System Online | Brazil/SP</div>
-            </div>
-            <div id="relogio" class="h4 fw-light">00:00:00</div>
-        </header>
-
-        <div class="row g-4">
-            <div class="col-md-7">
-                <div class="glass p-4 h-100">
-                    <h6 class="text-secondary mb-3">CONTEÚDO E ESTRATÉGIA</h6>
-                    <div id="dados-ia">
-                        <h2 id="tendencia">Sincronizando...</h2>
-                        <p id="insight" class="text-secondary lead small font-monospace"></p>
-                    </div>
-                    <hr class="border-secondary">
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-cmd btn-sm" onclick="alert('Gerando Roteiro...')">GERAR ROTEIRO IA</button>
-                        <button class="btn btn-cmd btn-sm" onclick="calcEngajamento()">CALCULAR ENGAGEMENT</button>
-                    </div>
+    <div class="container py-5">
+        <h4 class="text-center mb-5 text-secondary text-uppercase tracking-widest">Dual-Zone Telemetry</h4>
+        
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card-zone br-zone">
+                    <h6 class="text-secondary text-uppercase" id="br-city">--</h6>
+                    <div class="time-display" id="br-time">--:--</div>
+                    <span class="temp-badge" id="br-temp">--°C</span>
                 </div>
             </div>
-
-            <div class="col-md-5">
-                <div class="glass p-4">
-                    <h6 class="text-secondary mb-3">ROI CALCULATOR</h6>
-                    <input type="number" id="views" class="form-control bg-dark text-white border-secondary mb-2" placeholder="Visualizações">
-                    <input type="number" id="cliques" class="form-control bg-dark text-white border-secondary mb-3" placeholder="Cliques/Vendas">
-                    <button class="btn btn-info w-100" onclick="alert('Taxa de Conversão: ' + ((document.getElementById('cliques').value / document.getElementById('views').value) * 100).toFixed(2) + '%')">ANALISAR PERFORMANCE</button>
+            
+            <div class="col-md-6">
+                <div class="card-zone th-zone">
+                    <h6 class="text-secondary text-uppercase" id="th-city">--</h6>
+                    <div class="time-display" id="th-time">--:--</div>
+                    <span class="temp-badge" id="th-temp">--°C</span>
                 </div>
             </div>
+        </div>
+
+        <div class="msg-box">
+            <h5 class="fw-light mb-1" id="msg-pt">Conectando...</h5>
+            <p class="text-secondary mb-0" id="msg-th" style="font-size: 1.1rem;"></p>
+        </div>
+        <div class="text-center mt-4">
+            <small class="text-muted" id="update-time">Sync: --</small>
         </div>
     </div>
 
     <script>
-        function updateClock() {
-            document.getElementById('relogio').innerText = new Date().toLocaleTimeString();
-        }
-        setInterval(updateClock, 1000);
+        async function fetchSyncData() {
+            try {
+                const res = await fetch(`dados_ia.json?v=${Math.random()}`);
+                const data = await res.json();
+                
+                document.getElementById('br-city').innerText = data.brasil.cidade;
+                document.getElementById('br-time').innerText = data.brasil.horario;
+                document.getElementById('br-temp').innerText = data.brasil.temperatura;
 
-        async function loadData() {
-            const res = await fetch(`dados_ia.json?v=${Math.random()}`);
-            const data = await res.json();
-            document.getElementById('tendencia').innerText = data.tendencia_do_dia;
-            document.getElementById('insight').innerText = "LOG_DATA: " + data.alerta;
+                document.getElementById('th-city').innerText = data.tailandia.cidade;
+                document.getElementById('th-time').innerText = data.tailandia.horario;
+                document.getElementById('th-temp').innerText = data.tailandia.temperatura;
+
+                document.getElementById('msg-pt').innerText = data.comunicacao.pt;
+                document.getElementById('msg-th').innerText = data.comunicacao.th;
+                
+                document.getElementById('update-time').innerText = "Última sincronização: " + data.ultima_atualizacao;
+            } catch (e) {
+                console.error("Erro na leitura de dados");
+            }
         }
-        loadData();
+        fetchSyncData();
     </script>
 </body>
 </html>
