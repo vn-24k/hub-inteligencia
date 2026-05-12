@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H.I.E - Hub de Inteligência</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .card { background-color: #1e293b; border: 1px solid #334155; color: white; }
+        .status-online { color: #10b981; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <header class="pb-3 mb-4 border-bottom">
+            <span class="fs-4">🚀 Hub de Inteligência Estratégica</span>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="p-4 card rounded-3">
+                    <h2>Monitor de Automação</h2>
+                    <p>Status do Sistema: <span class="status-online">● Ativo</span></p>
+                    <div id="dados-ia">Aguardando dados do script Python...</div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="p-4 card rounded-3">
+                    <h2>Insights de IA</h2>
+                    <p id="insight-texto">O Ollama está processando as tendências atuais via Termux.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
