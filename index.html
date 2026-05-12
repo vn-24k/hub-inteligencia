@@ -3,69 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H.I.E - Hub de Inteligência</title>
+    <title>H.I.E - Terminal de Inteligência</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
-        .card { background-color: #1e293b; border: 1px solid #334155; transition: 0.3s; }
-        .card:hover { border-color: #38bdf8; }
-        .status-online { color: #10b981; font-weight: bold; }
-        header { border-bottom: 2px solid #38bdf8; }
-        .badge-custom { background-color: #38bdf8; color: #0f172a; }
+        body { background: radial-gradient(circle, #0f172a 0%, #020617 100%); color: #f8fafc; font-family: 'Courier New', monospace; min-height: 100vh; }
+        .monitor-card { background: rgba(30, 41, 59, 0.7); border: 1px solid #38bdf8; border-radius: 15px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); backdrop-filter: blur(10px); }
+        .crypto-value { font-size: 2.5rem; font-weight: bold; color: #38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        .scanline { width: 100%; height: 2px; background: rgba(56, 189, 248, 0.1); position: absolute; animation: scan 4s linear infinite; }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <header class="pb-3 mb-5 d-flex justify-content-between align-items-center">
-            <span class="fs-3 fw-bold">🚀 Hub de Inteligência <span style="color: #38bdf8;">Estratégica</span></span>
-            <span class="badge badge-custom">Mobile Dev Mode</span>
+    <div class="scanline"></div>
+    <div class="container py-5">
+        <header class="text-center mb-5">
+            <h1 class="display-5 fw-bold">SYSTEM <span class="text-info">INTELLIGENCE</span></h1>
+            <p class="text-secondary">Terminal de Monitoramento Mobile Ativo</p>
         </header>
 
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="p-4 card rounded-4 shadow-sm">
-                    <h4 class="mb-4 text-info">Monitor de Automação</h4>
-                    <div id="dados-ia">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="monitor-card p-5 text-center">
+                    <h3 class="text-secondary mb-4">MÉTRICA EM TEMPO REAL</h3>
+                    <div id="crypto-display" class="crypto-display mb-4">
                         <div class="spinner-border text-info" role="status"></div>
-                        <p class="mt-2">Sincronizando com Pydroid 3...</p>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="p-4 card rounded-4 shadow-sm">
-                    <h4 class="mb-4 text-info">Insights do Sistema</h4>
-                    <p id="insight-texto" class="lead">O processamento de dados está sendo gerenciado via terminal.</p>
-                    <hr class="text-secondary">
-                    <small class="text-secondary">Conectado via: <strong>Termux/Android</strong></small>
+                    <div class="row mt-4 border-top border-secondary pt-4">
+                        <div class="col-6">
+                            <small class="d-block text-secondary">STATUS</small>
+                            <span class="text-success fw-bold" id="status-text">--</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="d-block text-secondary">ATUALIZADO</small>
+                            <span id="update-text">--:--:--</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        async function carregarDados() {
+        async function updateDashboard() {
             try {
-                const response = await fetch('dados_ia.json');
-                const data = await response.json();
+                // Adicionamos um timestamp para evitar cache do navegador
+                const res = await fetch(`dados_ia.json?t=${Date.now()}`);
+                const data = await res.json();
                 
-                document.getElementById('dados-ia').innerHTML = `
-                    <p>Status: <span class="status-online">● ${data.status}</span></p>
-                    <p class="mb-1"><strong>Tendência:</strong></p>
-                    <div class="p-2 bg-dark rounded text-info mb-3">${data.tendencia_do_dia}</div>
-                    <p class="small text-secondary">Atualizado em: ${data.ultima_atualizacao}</p>
+                document.getElementById('crypto-display').innerHTML = `
+                    <div class="crypto-value">${data.tendencia_do_dia}</div>
+                    <p class="text-info mt-2">>>> ${data.alerta} <<<</p>
                 `;
-                
-                document.getElementById('insight-texto').innerText = data.alerta;
-            } catch (err) {
-                document.getElementById('dados-ia').innerHTML = `
-                    <div class="alert alert-warning">Aguardando arquivo dados_ia.json...</div>
-                `;
+                document.getElementById('status-text').innerText = data.status;
+                document.getElementById('update-text').innerText = data.ultima_atualizacao;
+            } catch (e) {
+                console.log("Aguardando novos dados...");
             }
         }
-
-        // Executa ao carregar a página
-        carregarDados();
+        setInterval(updateDashboard, 5000);
+        updateDashboard();
     </script>
 </body>
 </html>
