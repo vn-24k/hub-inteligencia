@@ -3,72 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sincronização Global</title>
+    <title>CAETANO STRATEGIC OPS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #121212; color: #ffffff; font-family: 'Inter', sans-serif; }
-        .card-zone { background: #1e1e1e; border-radius: 15px; padding: 30px; text-align: center; height: 100%; border-top: 3px solid #555; }
-        .br-zone { border-color: #009c3b; }
-        .th-zone { border-color: #ce1126; }
-        .time-display { font-size: 3.5rem; font-weight: 700; margin: 15px 0; letter-spacing: -2px; }
-        .temp-badge { background: #333; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; }
-        .msg-box { background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 20px; text-align: center; }
+        body { background-color: #050505; color: #e0e0e0; font-family: sans-serif; min-height: 100vh; margin: 0; }
+        .zone-container { display: flex; flex-wrap: wrap; height: 100vh; }
+        .zone { flex: 1; min-width: 300px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* Bandeiras sutilmente no fundo */
+        .br-bg { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg') center/cover; }
+        .th-bg { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg') center/cover; }
+
+        .elite-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 40px; border-radius: 2px; text-align: center; width: 80%; border-top: 4px solid #fff; }
+        .br-card { border-color: #00ff88; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+        .th-card { border-color: #ff2a2a; box-shadow: 0 0 20px rgba(255, 42, 42, 0.2); }
+
+        .city-name { letter-spacing: 5px; font-size: 0.8rem; color: #aaa; margin-bottom: 10px; }
+        .clock { font-size: 4rem; font-weight: bold; font-family: monospace; }
+        .clock span { font-size: 2rem; opacity: 0.3; }
+        .temp { font-family: monospace; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; }
+        
+        .footer-msg { position: absolute; bottom: 20px; width: 100%; text-align: center; z-index: 10; }
+        .msg-pill { background: #111; border: 1px solid #333; padding: 15px 30px; display: inline-block; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <div class="container py-5">
-        <h4 class="text-center mb-5 text-secondary text-uppercase tracking-widest">Dual-Zone Telemetry</h4>
-        
-        <div class="row g-4 mb-4">
-            <div class="col-md-6">
-                <div class="card-zone br-zone">
-                    <h6 class="text-secondary text-uppercase" id="br-city">--</h6>
-                    <div class="time-display" id="br-time">--:--</div>
-                    <span class="temp-badge" id="br-temp">--°C</span>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="card-zone th-zone">
-                    <h6 class="text-secondary text-uppercase" id="th-city">--</h6>
-                    <div class="time-display" id="th-time">--:--</div>
-                    <span class="temp-badge" id="th-temp">--°C</span>
-                </div>
+    <div class="zone-container">
+        <div class="zone br-bg">
+            <div class="elite-card br-card">
+                <div class="city-name" id="br-city">SÃO PAULO</div>
+                <div class="clock" id="br-time">00:00<span>:00</span></div>
+                <div class="temp" id="br-temp">--°C</div>
             </div>
         </div>
+        <div class="zone th-bg">
+            <div class="elite-card th-card">
+                <div class="city-name" id="th-city">BANGKOK</div>
+                <div class="clock" id="th-time">00:00<span>:00</span></div>
+                <div class="temp" id="th-temp">--°C</div>
+            </div>
+        </div>
+    </div>
 
-        <div class="msg-box">
-            <h5 class="fw-light mb-1" id="msg-pt">Conectando...</h5>
-            <p class="text-secondary mb-0" id="msg-th" style="font-size: 1.1rem;"></p>
-        </div>
-        <div class="text-center mt-4">
-            <small class="text-muted" id="update-time">Sync: --</small>
+    <div class="footer-msg">
+        <div class="msg-pill">
+            <div id="msg-pt">Conectando...</div>
+            <div id="msg-th" style="color: #666; font-size: 0.9rem;"></div>
         </div>
     </div>
 
     <script>
-        async function fetchSyncData() {
-            try {
-                const res = await fetch(`dados_ia.json?v=${Math.random()}`);
-                const data = await res.json();
-                
-                document.getElementById('br-city').innerText = data.brasil.cidade;
-                document.getElementById('br-time').innerText = data.brasil.horario;
-                document.getElementById('br-temp').innerText = data.brasil.temperatura;
-
-                document.getElementById('th-city').innerText = data.tailandia.cidade;
-                document.getElementById('th-time').innerText = data.tailandia.horario;
-                document.getElementById('th-temp').innerText = data.tailandia.temperatura;
-
-                document.getElementById('msg-pt').innerText = data.comunicacao.pt;
-                document.getElementById('msg-th').innerText = data.comunicacao.th;
-                
-                document.getElementById('update-time').innerText = "Última sincronização: " + data.ultima_atualizacao;
-            } catch (e) {
-                console.error("Erro na leitura de dados");
-            }
+        let config = {};
+        async function load() {
+            const r = await fetch(`dados_ia.json?v=${Date.now()}`);
+            config = await r.json();
+            document.getElementById('br-temp').innerText = config.brasil.temperatura;
+            document.getElementById('th-temp').innerText = config.tailandia.temperatura;
+            document.getElementById('msg-pt').innerText = config.mensagem.pt;
+            document.getElementById('msg-th').innerText = config.mensagem.th;
         }
-        fetchSyncData();
+
+        function tick() {
+            const now = new Date();
+            const format = (tz, id) => {
+                const s = now.toLocaleTimeString('pt-BR', {timeZone: tz, hour12: false});
+                const parts = s.split(':');
+                document.getElementById(id).innerHTML = `${parts[0]}:${parts[1]}<span>:${parts[2]}</span>`;
+            };
+            if(config.brasil) format(config.brasil.timeZone, 'br-time');
+            if(config.tailandia) format(config.tailandia.timeZone, 'th-time');
+        }
+        setInterval(tick, 1000);
+        load();
     </script>
 </body>
 </html>

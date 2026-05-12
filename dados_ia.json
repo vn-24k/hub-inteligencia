@@ -1,17 +1,16 @@
 {
     "brasil": {
         "cidade": "São Paulo, BR",
-        "horario": "02:56",
+        "timeZone": "America/Sao_Paulo",
         "temperatura": "9.6°C"
     },
     "tailandia": {
         "cidade": "Bangkok, TH",
-        "horario": "12:56",
-        "temperatura": "30.2°C"
+        "timeZone": "Asia/Bangkok",
+        "temperatura": "30.3°C"
     },
-    "comunicacao": {
-        "pt": "O sistema está online e conectado.",
+    "mensagem": {
+        "pt": "Sistemas Globais Sincronizados. Operando via Código Proprietário.",
         "th": "ระบบออนไลน์และเชื่อมต่อแล้ว"
-    },
-    "ultima_atualizacao": "12/05/2026 - 02:56"
+    }
 }

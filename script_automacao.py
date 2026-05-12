@@ -1,58 +1,38 @@
-import requests
-import json
-from datetime import datetime
-import pytz
+import requests, json, datetime
 
-def buscar_clima(lat, lon):
-    # API pública que não exige chave de acesso
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
+def buscar_telemetria():
+    # Coordenadas precisas
+    api_url = "https://api.open-meteo.com/v1/forecast"
+    params_sp = {"latitude": -23.55, "longitude": -46.63, "current_weather": True}
+    params_th = {"latitude": 13.75, "longitude": 100.50, "current_weather": True}
+
     try:
-        resposta = requests.get(url).json()
-        return resposta['current_weather']['temperature']
+        temp_sp = requests.get(api_url, params=params_sp).json()['current_weather']['temperature']
+        temp_th = requests.get(api_url, params=params_th).json()['current_weather']['temperature']
     except:
-        return "--"
+        temp_sp, temp_th = "--", "--"
 
-def gerar_sincronizacao():
-    # 1. Calculando os Fusos Horários Exatos
-    fuso_br = pytz.timezone('America/Sao_Paulo')
-    fuso_th = pytz.timezone('Asia/Bangkok')
-    
-    hora_br = datetime.now(fuso_br).strftime('%H:%M')
-    hora_th = datetime.now(fuso_th).strftime('%H:%M')
-    
-    # 2. Buscando a Temperatura (São Paulo e Bangkok)
-    temp_br = buscar_clima(-23.55, -46.63)
-    temp_th = buscar_clima(13.75, 100.50)
-    
-    # 3. A Mensagem do Dia
-    mensagem_pt = "O sistema está online e conectado."
-    mensagem_th = "ระบบออนไลน์และเชื่อมต่อแล้ว" # Tradução exata
-    
-    # 4. Estruturando os Dados Complexos
     dados = {
         "brasil": {
             "cidade": "São Paulo, BR",
-            "horario": hora_br,
-            "temperatura": f"{temp_br}°C"
+            "timeZone": "America/Sao_Paulo",
+            "temperatura": f"{temp_sp}°C"
         },
         "tailandia": {
             "cidade": "Bangkok, TH",
-            "horario": hora_th,
+            "timeZone": "Asia/Bangkok",
             "temperatura": f"{temp_th}°C"
         },
-        "comunicacao": {
-            "pt": mensagem_pt,
-            "th": mensagem_th
-        },
-        "ultima_atualizacao": datetime.now(fuso_br).strftime('%d/%m/%Y - %H:%M')
+        "mensagem": {
+            "pt": "Sistemas Globais Sincronizados. Operando via Código Proprietário.",
+            "th": "ระบบออนไลน์และเชื่อมต่อแล้ว"
+        }
     }
-    
-    # 5. Salvando o arquivo com suporte a caracteres especiais (para o Tailandês)
+
     with open("dados_ia.json", "w", encoding='utf-8') as f:
         json.dump(dados, f, indent=4, ensure_ascii=False)
-    
-    print("Sincronização Intercontinental Concluída!")
+    print("Dados de telemetria atualizados!")
 
 if __name__ == "__main__":
-    gerar_sincronizacao()
+    buscar_telemetria()
 
